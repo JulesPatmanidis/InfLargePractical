@@ -15,17 +15,23 @@ public class WebFetcher {
 
     private static final String BASE_URL = "http://localhost:9898/";
     private static final HttpClient client = HttpClient.newHttpClient();
+    private static final String FAILED_REQUEST = "";
     public static final String MENUS_PATHNAME = "menus/menus.json";
+
 
     /**
      * Fetches the requested json file from the web server and returns its contents as a String for further
      * manipulation.
+     * If connection to the server fails or the response is not 200 (OK), the application exits with error code 1.
      *
      * @param target The name of the folder and JSON file on the web server. (e.g.: menus)
      * @return The raw JSON file contents as a String, or an empty String in case of an error.
      */
     public static String fetch(String target) {
-        HttpRequest request = HttpRequest.newBuilder()
+        String jsonResponse = FAILED_REQUEST;
+
+        HttpRequest request = HttpRequest
+                .newBuilder()
                 .uri(URI.create(BASE_URL + target))
                 .build();
         try {
@@ -33,25 +39,22 @@ public class WebFetcher {
 
             if (response.statusCode() != 200) {
                 System.err.println("Response is not valid, status code: " + response.statusCode());
-                return "";
+            } else {
+                jsonResponse = response.body();
             }
-            return response.body();
 
-        } catch (IOException | InterruptedException e) {
-            System.err.println("Exception during Http request");
+        } catch (IOException e) {
+            System.err.println("IOException during Http request, check the connection to the server.");
             e.printStackTrace();
-            return "";
+        } catch (InterruptedException e) {
+            System.err.println("Thread was interrupted during Http request, ");
+            e.printStackTrace();
         }
 
+        if (jsonResponse.equals(FAILED_REQUEST)) {
+            System.err.println("The application will now exit due to a fatal error.");
+            System.exit(1);
+        }
+        return jsonResponse;
     }
-
-    /**
-     * Helper function that constructs the pathname for the required json file.
-     * @param target The name of the target folder.
-     * @return A URL that points to the correct json file from the web server
-     */
-    private static String constructPathName(String target) {
-        return BASE_URL + target + "/" + target + ".json";
-    }
-
 }

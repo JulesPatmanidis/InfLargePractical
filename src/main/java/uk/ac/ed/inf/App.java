@@ -8,7 +8,6 @@ public class App {
 
     public static void main( String[] args )
     {
-        Menus menus = new Menus("localhost", "9898");
-        System.out.println(menus.getDeliveryCost("Hummus and salad Italian roll"));
+
     }
 }

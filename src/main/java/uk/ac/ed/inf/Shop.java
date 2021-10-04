@@ -1,6 +1,9 @@
 package uk.ac.ed.inf;
 
-public class Store {
+/**
+ * This class represents Shops from where customers can make an order. Used for JSON parsing.
+ */
+public class Shop {
 
     private String name;
     private String location;
