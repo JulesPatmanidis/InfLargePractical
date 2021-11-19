@@ -1,4 +1,4 @@
-package uk.ac.ed.inf;
+package uk.ac.ed.inf.Clients;
 
 import java.io.IOException;
 import java.net.URI;
@@ -8,16 +8,18 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 
 /**
- * This class serves as an interface between the web server and the rest of the program. I handles requests and fetches
+ * This class serves as an interface between the web server and the rest of the program. It handles requests and fetches
  * data.
  */
-public class WebFetcher {
+public final class WebServerClient {
 
     private static final String BASE_URL = "http://localhost:9898/";
     private static final HttpClient client = HttpClient.newHttpClient();
     private static final String FAILED_REQUEST = "";
     public static final String MENUS_PATHNAME = "menus/menus.json";
-
+    public static final String NO_FLY_ZONES_PATHNAME = "buildings/no-fly-zones.geojson";
+    public static final String WORDS_FIRST_PATHNAME = "words";
+    public static final String WORDS_LAST_PATHNAME = "/details.json";
 
     /**
      * Fetches the requested json file from the web server and returns its contents as a String for further
@@ -27,7 +29,7 @@ public class WebFetcher {
      * @param target The name of the folder and JSON file on the web server. (e.g.: menus)
      * @return The raw JSON file contents as a String, or an empty String in case of an error.
      */
-    public static String fetch(String target) {
+    public static String fetchFromServer(String target) {
         String jsonResponse = FAILED_REQUEST;
 
         HttpRequest request = HttpRequest
