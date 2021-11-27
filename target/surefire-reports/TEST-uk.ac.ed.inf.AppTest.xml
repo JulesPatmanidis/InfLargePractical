@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="21" failures="0" name="uk.ac.ed.inf.AppTest" time="0.252" errors="0" skipped="0">
+<testsuite tests="21" failures="0" name="uk.ac.ed.inf.AppTest" time="0.296" errors="0" skipped="0">
   <properties>
     <property name="idea.version" value="2021.2.3"/>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
@@ -30,7 +30,7 @@
     <property name="maven.ext.class.path" value="C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2020.2.2\plugins\maven\lib\maven-event-listener.jar"/>
     <property name="classworlds.conf" value="C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2020.2.2\plugins\maven\lib\maven3\bin\m2.conf"/>
     <property name="sun.jnu.encoding" value="Cp1252"/>
-    <property name="java.library.path" value="C:\Java\jdk-15_windows-x64_bin\jdk-15\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Python310\Scripts\;C:\Python310\;C:\Program Files (x86)\Razer\ChromaBroadcast\bin;C:\Program Files\Razer\ChromaBroadcast\bin;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Java\jdk-15_windows-x64_bin\bin;C:\Program Files\Git\cmd;C:\Program Files\PuTTY\;C:\WINDOWS\system32\config\systemprofile\AppData\Local\Microsoft\WindowsApps;C:\Program Files\nodejs\;C:\ProgramData\chocolatey\bin;C:\Users\Ioulios. P\AppData\Local\Programs\Python\Python38-32\Scripts\;C:\Users\Ioulios. P\AppData\Local\Programs\Python\Python38-32\;C:\Users\Ioulios. P\AppData\Local\Microsoft\WindowsApps;C:\Program Files\JetBrains\PyCharm Community Edition 2020.2.2\bin;;C:\Users\Ioulios. P\AppData\Local\Programs\Microsoft VS Code\bin;C:\MinGW\bin;;C:\Program Files\JetBrains\WebStorm 2021.2.3\bin;;C:\Users\Ioulios. P\AppData\Roaming\npm;."/>
+    <property name="java.library.path" value="C:\Java\jdk-15_windows-x64_bin\jdk-15\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Program Files (x86)\Razer Chroma SDK\bin;C:\Program Files\Razer Chroma SDK\bin;C:\Python310\Scripts\;C:\Python310\;C:\Program Files (x86)\Razer\ChromaBroadcast\bin;C:\Program Files\Razer\ChromaBroadcast\bin;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Java\jdk-15_windows-x64_bin\jdk-15\bin;C:\Program Files\Git\cmd;C:\WINDOWS\system32\config\systemprofile\AppData\Local\Microsoft\WindowsApps;C:\ProgramData\chocolatey\bin;C:\Program Files\PuTTY\;C:\Program Files\nodejs\;C:\Users\Ioulios. P\AppData\Local\Programs\Python\Python38-32\Scripts\;C:\Users\Ioulios. P\AppData\Local\Programs\Python\Python38-32\;C:\Users\Ioulios. P\AppData\Local\Microsoft\WindowsApps;C:\Program Files\JetBrains\PyCharm Community Edition 2020.2.2\bin;;C:\Users\Ioulios. P\AppData\Local\Programs\Microsoft VS Code\bin;C:\MinGW\bin;;C:\Program Files\JetBrains\WebStorm 2021.2.3\bin;;C:\Users\Ioulios. P\AppData\Roaming\npm;."/>
     <property name="maven.conf" value="C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2020.2.2\plugins\maven\lib\maven3/conf"/>
     <property name="jdk.debug" value="release"/>
     <property name="java.class.version" value="59.0"/>
@@ -65,9 +65,9 @@
   <testcase classname="uk.ac.ed.inf.AppTest" name="testAngle50" time="0"/>
   <testcase classname="uk.ac.ed.inf.AppTest" name="testAngle90" time="0"/>
   <testcase classname="uk.ac.ed.inf.AppTest" name="testCloseToTrue" time="0"/>
-  <testcase classname="uk.ac.ed.inf.AppTest" name="testMenusFourA" time="0.232"/>
+  <testcase classname="uk.ac.ed.inf.AppTest" name="testMenusFourA" time="0.273"/>
   <testcase classname="uk.ac.ed.inf.AppTest" name="testMenusFourB" time="0.011"/>
-  <testcase classname="uk.ac.ed.inf.AppTest" name="testMenusThree" time="0.002"/>
+  <testcase classname="uk.ac.ed.inf.AppTest" name="testMenusThree" time="0.004"/>
   <testcase classname="uk.ac.ed.inf.AppTest" name="testAngle140" time="0"/>
   <testcase classname="uk.ac.ed.inf.AppTest" name="testAngle190" time="0"/>
   <testcase classname="uk.ac.ed.inf.AppTest" name="testAngle260" time="0"/>
@@ -75,7 +75,7 @@
   <testcase classname="uk.ac.ed.inf.AppTest" name="testAngle350" time="0"/>
   <testcase classname="uk.ac.ed.inf.AppTest" name="testAngle999" time="0"/>
   <testcase classname="uk.ac.ed.inf.AppTest" name="testMenusOne" time="0.005"/>
-  <testcase classname="uk.ac.ed.inf.AppTest" name="testMenusTwo" time="0.002"/>
+  <testcase classname="uk.ac.ed.inf.AppTest" name="testMenusTwo" time="0.003"/>
   <testcase classname="uk.ac.ed.inf.AppTest" name="testAngle0" time="0"/>
   <testcase classname="uk.ac.ed.inf.AppTest" name="testIsConfinedFalse" time="0"/>
   <testcase classname="uk.ac.ed.inf.AppTest" name="testIsConfinedTrueA" time="0"/>

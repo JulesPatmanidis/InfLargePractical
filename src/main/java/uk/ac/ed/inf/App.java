@@ -1,10 +1,17 @@
 package uk.ac.ed.inf;
 
-import uk.ac.ed.inf.Clients.DatabaseClient;
-import uk.ac.ed.inf.Utils.Utils;
+import uk.ac.ed.inf.clients.DatabaseClient;
+import uk.ac.ed.inf.clients.WebServerClient;
+import uk.ac.ed.inf.domain.Delivery;
+import uk.ac.ed.inf.domain.ItemData;
+import uk.ac.ed.inf.domain.LongLat;
+import uk.ac.ed.inf.domain.Order;
+import uk.ac.ed.inf.controller.DroneController;
+import uk.ac.ed.inf.utils.Utils;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -13,7 +20,6 @@ import java.util.List;
  */
 public class App {
 
-    private static final String MACHINE_NAME = "localHost";
     private static final LongLat APPLETON_TOWER = new LongLat(-3.186874, 55.944494);
     private static final int DRONE_STEPS = 1500;
 
@@ -26,25 +32,32 @@ public class App {
      */
     public static void main( String[] args )
     {
-        String dateString = args[2] + "-" + args[1] + "-" + args[0]; //"2022-12-12";
+        /* Parse command line arguments */
+        String dateString = args[2] + "-" + args[1] + "-" + args[0]; //"YYYY-MM-DD";
         String serverPort = args[3];
         String dbPort = args[4];
         String outputFileName = "drone-" + args[0] + "-" + args[1] + "-" + args[2] + ".geojson";
 
-        Menus menus = new Menus(MACHINE_NAME, serverPort);
+        /* Initialise  */
         DatabaseClient databaseClient = new DatabaseClient(dbPort);
+        WebServerClient webServerClient = new WebServerClient(serverPort);
+        ItemData itemData = new ItemData(webServerClient.getMenuData());
         List<Order> orders = databaseClient.readOrders(Date.valueOf(dateString));
-        DroneController droneController = new DroneController(menus, APPLETON_TOWER, DRONE_STEPS, orders);
 
-        List<Delivery> deliveries = new ArrayList<>();
+        /* Sort orders by descending delivery cost */
+        orders.sort(Comparator.comparingInt(o -> itemData.calculateDeliveryCost(((Order) o).getOrderDetails())).reversed());
+
+        DroneController droneController =
+                new DroneController(itemData, APPLETON_TOWER, DRONE_STEPS, orders, webServerClient);
+
         int totalMonetaryValue = 0;
         int deliveredMonetaryValue = 0;
-
         int currentCost;
 
+        List<Delivery> deliveries = new ArrayList<>();
         for (Order order : orders) {
             boolean delivered = droneController.deliverNextOrder();
-            currentCost = menus.getDeliveryCost(order.getOrderDetails().toArray(new String[0]));
+            currentCost = itemData.calculateDeliveryCost(order.getOrderDetails());
             totalMonetaryValue += currentCost;
             if (delivered) {
                 deliveredMonetaryValue += currentCost;
@@ -55,10 +68,8 @@ public class App {
         System.out.printf("Percentage monetary value: %.3f%%\n", (deliveredMonetaryValue / totalMonetaryValue) * 100d);
 
         databaseClient.writeDeliveries(deliveries);
-        databaseClient.writeFlightpath(droneController.flightpaths);
-        String output = Parser.GeoJsonFromFlightpath(droneController.flightpaths);
-//        System.out.printf("pos: (%.6f, %.6f) | steps left: %d\n",
-//                droneController.currentPos.longitude, droneController.currentPos.latitude, droneController.stepsLeft);
+        databaseClient.writeFlightpath(droneController.getFlightpathList());
+        String output = Utils.GeoJsonFromFlightpath(droneController.getFlightpathList());
 
         if (Utils.writeToFile(outputFileName, output)) {
             System.out.println("Output file written successfully.");

@@ -1,7 +1,14 @@
 package uk.ac.ed.inf;
 
+import org.junit.Ignore;
 import org.junit.Test;
-import uk.ac.ed.inf.Clients.DatabaseClient;
+import uk.ac.ed.inf.clients.DatabaseClient;
+import uk.ac.ed.inf.clients.WebServerClient;
+import uk.ac.ed.inf.domain.ItemData;
+import uk.ac.ed.inf.domain.LongLat;
+import uk.ac.ed.inf.domain.Order;
+import uk.ac.ed.inf.controller.DroneController;
+import uk.ac.ed.inf.utils.Utils;
 
 import java.time.LocalDate;
 import java.io.File;
@@ -9,6 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -72,8 +80,8 @@ public class AppTest {
 
 
     private boolean approxEq(LongLat l1, LongLat l2) {
-        return approxEq(l1.longitude, l2.longitude) &&
-                approxEq(l1.latitude, l2.latitude);
+        return approxEq(l1.getLongitude(), l2.getLongitude()) &&
+                approxEq(l1.getLatitude(), l2.getLatitude());
     }
 
     @Test
@@ -146,87 +154,92 @@ public class AppTest {
         assertTrue(approxEq(nextPosition, appletonTower));
     }
 
-    @Test
-    public void testMenusOne() {
-        // The webserver must be running on port 9898 to run this test.
-        Menus menus = new Menus("localhost", "9898");
-        int totalCost = menus.getDeliveryCost(
-                "Ham and mozzarella Italian roll"
-        );
-        // Don't forget the standard delivery charge of 50p
-        assertEquals(230 + 50, totalCost);
-    }
+//    @Test
+//    public void testMenusOne() {
+//        // The webserver must be running on port 9898 to run this test.
+//        Menus menus = new Menus("localhost", "9898");
+//        int totalCost = menus.getDeliveryCost(List.of(
+//                "Ham and mozzarella Italian roll"
+//        ));
+//        // Don't forget the standard delivery charge of 50p
+//        assertEquals(230 + 50, totalCost);
+//    }
+//
+//    @Test
+//    public void testMenusTwo() {
+//        // The webserver must be running on port 9898 to run this test.
+//        Menus menus = new Menus("localhost", "9898");
+//        int totalCost = menus.getDeliveryCost(List.of(
+//                "Ham and mozzarella Italian roll",
+//                "Salami and Swiss Italian roll"
+//        ));
+//        // Don't forget the standard delivery charge of 50p
+//        assertEquals(230 + 230 + 50, totalCost);
+//    }
+//
+//    @Test
+//    public void testMenusThree() {
+//        // The webserver must be running on port 9898 to run this test.
+//        Menus menus = new Menus("localhost", "9898");
+//        int totalCost = menus.getDeliveryCost(List.of(
+//                "Ham and mozzarella Italian roll",
+//                "Salami and Swiss Italian roll",
+//                "Flaming tiger latte"
+//        ));
+//        // Don't forget the standard delivery charge of 50p
+//        assertEquals(230 + 230 + 460 + 50, totalCost);
+//    }
+//
+//    @Test
+//    public void testMenusFourA() {
+//        // The webserver must be running on port 9898 to run this test.
+//        Menus menus = new Menus("localhost", "9898");
+//        int totalCost = menus.getDeliveryCost(List.of(
+//                "Ham and mozzarella Italian roll",
+//                "Salami and Swiss Italian roll",
+//                "Flaming tiger latte",
+//                "Dirty matcha latte"
+//        ));
+//        // Don't forget the standard delivery charge of 50p
+//        assertEquals(230 + 230 + 460 + 460 + 50, totalCost);
+//    }
+//
+//    @Test
+//    public void testMenusFourB() {
+//        // The webserver must be running on port 9898 to run this test.
+//        Menus menus = new Menus("localhost", "9898");
+//        int totalCost = menus.getDeliveryCost(List.of(
+//                "Flaming tiger latte",
+//                "Dirty matcha latte",
+//                "Strawberry matcha latte",
+//                "Fresh taro latte"
+//        ));
+//        // Don't forget the standard delivery charge of 50p
+//        assertEquals(4 * 460 + 50, totalCost);
+//    }
+
+
 
     @Test
-    public void testMenusTwo() {
-        // The webserver must be running on port 9898 to run this test.
-        Menus menus = new Menus("localhost", "9898");
-        int totalCost = menus.getDeliveryCost(
-                "Ham and mozzarella Italian roll",
-                "Salami and Swiss Italian roll"
-        );
-        // Don't forget the standard delivery charge of 50p
-        assertEquals(230 + 230 + 50, totalCost);
-    }
-
-    @Test
-    public void testMenusThree() {
-        // The webserver must be running on port 9898 to run this test.
-        Menus menus = new Menus("localhost", "9898");
-        int totalCost = menus.getDeliveryCost(
-                "Ham and mozzarella Italian roll",
-                "Salami and Swiss Italian roll",
-                "Flaming tiger latte"
-        );
-        // Don't forget the standard delivery charge of 50p
-        assertEquals(230 + 230 + 460 + 50, totalCost);
-    }
-
-    @Test
-    public void testMenusFourA() {
-        // The webserver must be running on port 9898 to run this test.
-        Menus menus = new Menus("localhost", "9898");
-        int totalCost = menus.getDeliveryCost(
-                "Ham and mozzarella Italian roll",
-                "Salami and Swiss Italian roll",
-                "Flaming tiger latte",
-                "Dirty matcha latte"
-        );
-        // Don't forget the standard delivery charge of 50p
-        assertEquals(230 + 230 + 460 + 460 + 50, totalCost);
-    }
-
-    @Test
-    public void testMenusFourB() {
-        // The webserver must be running on port 9898 to run this test.
-        Menus menus = new Menus("localhost", "9898");
-        int totalCost = menus.getDeliveryCost(
-                "Flaming tiger latte",
-                "Dirty matcha latte",
-                "Strawberry matcha latte",
-                "Fresh taro latte"
-        );
-        // Don't forget the standard delivery charge of 50p
-        assertEquals(4 * 460 + 50, totalCost);
-    }
-
-
-
-    @Test
+    @Ignore
     public void testDroneController() {
-        Menus menus = new Menus("localhost", "9898");
-        DatabaseClient databaseClient = new DatabaseClient("9876");
-        List<Order> orders = databaseClient.readOrders(Date.valueOf(TEST_DATE_2));
-        DroneController droneController = new DroneController(menus, AT, 1500, orders);
+        DatabaseClient databaseClient = new DatabaseClient("1234");
+        WebServerClient webServerClient = new WebServerClient("9999");
+        ItemData itemData = new ItemData(webServerClient.getMenuData());
+        List<Order> orders = databaseClient.readOrders(Date.valueOf("2022-10-10"));
+        DroneController droneController = new DroneController(itemData, AT, 1500, orders, webServerClient);
 
         int totalMonetaryValue = 0;
         int deliveredMonetaryValue = 0;
 
         int currentCost;
 
+        orders.sort(Comparator.comparingInt(o -> itemData.calculateDeliveryCost(((Order) o).getOrderDetails())).reversed());
+
         for (Order order : orders) {
             boolean delivered = droneController.deliverNextOrder();
-            currentCost = menus.getDeliveryCost(order.getOrderDetails().toArray(new String[0]));
+
+            currentCost = itemData.calculateDeliveryCost(order.getOrderDetails());
             totalMonetaryValue += currentCost;
             if (delivered) {
                 deliveredMonetaryValue += currentCost;
@@ -236,10 +249,8 @@ public class AppTest {
         System.out.println(deliveredMonetaryValue);
         System.out.printf("Percentage monetary value: %.1f%%\n", ((double) deliveredMonetaryValue / totalMonetaryValue) * 100d);
 
-
-
-        assertTrue(droneController.currentPos.closeTo(AT));
-        assertFalse(droneController.flightpaths.isEmpty());
+        assertTrue(droneController.getCurrentPos().closeTo(AT));
+        assertFalse(droneController.getFlightpathList().isEmpty());
         //assertTrue(droneController.stepsLeft >= 0);
 
         try {
@@ -250,7 +261,8 @@ public class AppTest {
                 System.out.println("File already exists.");
             }
             FileWriter writer = new FileWriter(file);
-            writer.write(Parser.GeoJsonFromFlightpath(droneController.flightpaths));
+            //writer.write(Utils.GeoJsonFromFlightpath(droneController.getFlightpathList().subList(219,223)));
+            writer.write(Utils.GeoJsonFromFlightpath(droneController.getFlightpathList()));
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -258,15 +270,18 @@ public class AppTest {
     }
 
     @Test
+    @Ignore
     public void allDatesRunTest() {
         double sAvgMonetaryValue = 0;
-        Menus menus = new Menus("localhost", "9898");
-        DatabaseClient databaseClient = new DatabaseClient("9876");
+
+        DatabaseClient databaseClient = new DatabaseClient("1234");
+        WebServerClient webServerClient = new WebServerClient("9999");
+        ItemData itemData = new ItemData(webServerClient.getMenuData());
         List<String> dates = new ArrayList<>();
         LocalDate localeDate;
         Date firstDate = Date.valueOf("2022-01-01");
         String currentDate = firstDate.toString();
-        while (!currentDate.equals("2023-12-31")) {
+        while (!currentDate.equals("2024-01-01")) {
             dates.add(currentDate);
 
             localeDate = LocalDate.parse(currentDate);
@@ -274,7 +289,7 @@ public class AppTest {
         }
         int count = 0;
         for (String date : dates) {
-            sAvgMonetaryValue += runForDate(date, menus, databaseClient);
+            sAvgMonetaryValue += runForDate(date, itemData, databaseClient, webServerClient);
             count++;
         }
         sAvgMonetaryValue = sAvgMonetaryValue / count;
@@ -282,12 +297,14 @@ public class AppTest {
     }
 
     @Test
+    @Ignore
     public void getSampledAverageMonetaryValue() {
         System.out.println("Calculating Sampled Average Percentage Monetary Value for " + SAMPLE_COUNT + " random dates.");
         double sAvgMonetaryValue = 0;
 
-        Menus menus = new Menus("localhost", "9898");
         DatabaseClient databaseClient = new DatabaseClient("9876");
+        WebServerClient webServerClient = new WebServerClient("9898");
+        ItemData itemData = new ItemData(webServerClient.getMenuData());
         List<String> dates = new ArrayList<>();
 
         for (int i = 0; i < SAMPLE_COUNT; i++) {
@@ -298,25 +315,27 @@ public class AppTest {
         }
 
         for (String date : dates) {
-            sAvgMonetaryValue += runForDate(date, menus, databaseClient);
+            sAvgMonetaryValue += runForDate(date, itemData, databaseClient, webServerClient);
         }
 
         sAvgMonetaryValue = sAvgMonetaryValue / SAMPLE_COUNT;
         System.out.printf("Sampled Average Percentage monetary value: %.1f%%\n", sAvgMonetaryValue);
     }
 
-    public double runForDate(String date, Menus menus, DatabaseClient databaseClient) {
+    public double runForDate(String date, ItemData itemData, DatabaseClient databaseClient, WebServerClient webServerClient) {
         List<Order> orders = databaseClient.readOrders(Date.valueOf(date));
-        DroneController droneController = new DroneController(menus, AT, 1500, orders);
+        DroneController droneController = new DroneController(itemData, AT, 1500, orders, webServerClient);
 
         int totalMonetaryValue = 0;
         int deliveredMonetaryValue = 0;
 
         int currentCost;
 
+        orders.sort(Comparator.comparingInt(o -> itemData.calculateDeliveryCost(((Order) o).getOrderDetails())).reversed());
+
         for (Order order : orders) {
             boolean delivered = droneController.deliverNextOrder();
-            currentCost = menus.getDeliveryCost(order.getOrderDetails().toArray(new String[0]));
+            currentCost = itemData.calculateDeliveryCost(order.getOrderDetails());
             totalMonetaryValue += currentCost;
             if (delivered) {
                 deliveredMonetaryValue += currentCost;
@@ -324,6 +343,4 @@ public class AppTest {
         }
         return  ((double) deliveredMonetaryValue / totalMonetaryValue) * 100d;
     }
-
-
 }

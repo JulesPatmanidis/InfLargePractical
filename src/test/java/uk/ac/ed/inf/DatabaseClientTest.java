@@ -1,6 +1,7 @@
 package uk.ac.ed.inf;
 import org.junit.Test;
-import uk.ac.ed.inf.Clients.DatabaseClient;
+import uk.ac.ed.inf.clients.DatabaseClient;
+import uk.ac.ed.inf.domain.Order;
 
 import static org.junit.Assert.*;
 import java.sql.Date;
