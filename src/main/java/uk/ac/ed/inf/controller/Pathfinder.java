@@ -22,13 +22,16 @@ public class Pathfinder {
 
     private static final double C_AREA_LENGTH_X = Math.abs(TOP_LEFT.getLongitude() - TOP_RIGHT.getLongitude());
     private static final double C_AREA_LENGTH_Y = Math.abs(TOP_LEFT.getLatitude() - BOT_LEFT.getLatitude());
-    public static final double EPSILON = LongLat.CLOSE_DISTANCE / 5; /* Determines the size of the grid cells */
+    public static final double EPSILON = LongLat.CLOSE_DISTANCE / 4; /* Determines the size of the grid cells */
 
     private static List<List<GridNode>> virtualGrid;
     private final List<Polygon> noFlyZones;
+    private final List<Line2D> noFlyZoneEdges = new ArrayList<>();
+    private final List<Path2D> noFlyZonePaths = new ArrayList<>();
 
     public Pathfinder(List<Polygon> noFlyZones) {
         this.noFlyZones = noFlyZones;
+        storeNoFlyZones(noFlyZones);
         generateGrid();
     }
 
@@ -74,7 +77,7 @@ public class Pathfinder {
         GridNode currentNode;
 
         while (!openQueue.isEmpty()) {
-            /* Get the head of the queue and remove it from the list */
+            /* Get the best node from the queue and remove it from the list */
             currentNode = openQueue.poll();
 
             /* if current node is the destination, generate route and return it */
@@ -102,7 +105,8 @@ public class Pathfinder {
 
 
                 /* If the neighbour has line of sight with the parent of the current node, ignore current node */
-                if ( currentNode.getParent() != null && lineOfSight(currentNode.getParent().getCoordinates(), neighbour.getCoordinates())) {
+                if (currentNode.getParent() != null
+                        && lineOfSight(currentNode.getParent().getCoordinates(), neighbour.getCoordinates())) {
                     neighbour.setParent(currentNode.getParent());
                 } else {
                     neighbour.setParent(currentNode);
@@ -153,6 +157,35 @@ public class Pathfinder {
     }
 
     /**
+     * Converts the no-fly-zone polygons to Path2D and line2D objects and adds them to the noFlyZonePaths and
+     * noFlyZoneEdges lists. There is some data duplication here, but it should not cause any memory issues due to its
+     * size.
+     * @param noFlyZones List of Polygon objects
+     */
+    private void storeNoFlyZones(List<Polygon> noFlyZones) {
+        for (Polygon poly : noFlyZones) {
+            List<Point> points = poly.outer().coordinates();
+            Path2D path2D = new Path2D.Double();
+            path2D.moveTo(points.get(0).longitude(), points.get(0).latitude());
+
+            for (int i = 1; i < points.size(); i++) {
+                path2D.lineTo(points.get(i).longitude(), points.get(i).latitude());
+            }
+            noFlyZonePaths.add(path2D);
+
+            for (int j = 0; j < points.size() - 1; j++) {
+                Line2D edge = new Line2D.Double(
+                        points.get(j).longitude(),
+                        points.get(j).latitude(),
+                        points.get(j + 1).longitude(),
+                        points.get(j + 1).latitude()
+                );
+                noFlyZoneEdges.add(edge);
+            }
+        }
+    }
+
+    /**
      * Given a node, reconstruct the path from the given node to the start by repeatedly moving through the parents
      * of the node.
      * @param node the GridNode where the path starts.
@@ -187,16 +220,8 @@ public class Pathfinder {
         nodeEdges = getEdgePoints(longLat);
 
         boolean insideNoFlyZone = false;
-
         /* For each polygon, check if any of the edges of the GridNode are inside it */
-        for (Polygon polygon : noFlyZones) {
-            List<Point> pts = polygon.outer().coordinates();
-            Path2D path2D = new Path2D.Double();
-            path2D.moveTo(pts.get(0).longitude(), pts.get(0).latitude());
-            for (int i = 1; i < pts.size(); i++) {
-                path2D.lineTo(pts.get(i).longitude(), pts.get(i).latitude());
-            }
-
+        for (Path2D path2D : noFlyZonePaths) {
             for (LongLat edgePoint : nodeEdges) {
                 insideNoFlyZone = insideNoFlyZone || path2D.contains(edgePoint.getLongitude(), edgePoint.getLatitude());
             }
@@ -220,37 +245,22 @@ public class Pathfinder {
      */
     public boolean lineOfSight(LongLat a, LongLat b) {
         Objects.requireNonNull(noFlyZones);
-        List<LongLat> edgePointsA;
-        List<LongLat> edgePointsB;
-        edgePointsA = getEdgePoints(a);
-        edgePointsB = getEdgePoints(b);
         double x_1, y_1, x_2, y_2;
 
-        for (int i = 0; i < edgePointsA.size(); i++) {
-            x_1 = edgePointsA.get(i).getLongitude();
-            y_1 = edgePointsA.get(i).getLatitude();
-            x_2 = edgePointsB.get(i).getLongitude();
-            y_2 = edgePointsB.get(i).getLatitude();
-            /* Cast a ray between the two points*/
-            Line2D ray = new Line2D.Double(x_1, y_1, x_2, y_2);
+        /* Cast a ray between the two points*/
+        x_1 = a.getLongitude();
+        y_1 = a.getLatitude();
+        x_2 = b.getLongitude();
+        y_2 = b.getLatitude();
+        Line2D ray = new Line2D.Double(x_1, y_1, x_2, y_2);
 
-            /* If the ray intersects with any no-fly-zone edge, there is no line of sight */
-            for (Polygon poly : noFlyZones) {
-                List<Point> points = poly.outer().coordinates();
-                for (int j = 0; j < points.size() - 1; j++) {
-                    Line2D edge = new Line2D.Double(
-                            points.get(j).longitude(),
-                            points.get(j).latitude(),
-                            points.get(j + 1).longitude(),
-                            points.get(j + 1).latitude()
-                    );
-
-                    if (ray.intersectsLine(edge)) {
-                        return false;
-                    }
-                }
+        /* If the ray intersects with any no-fly-zone edge, there is no line of sight */
+        for (Line2D edge : noFlyZoneEdges) {
+            if (ray.intersectsLine(edge)) {
+                return false;
             }
         }
+
         return true;
     }
 

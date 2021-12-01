@@ -1,8 +1,5 @@
 package uk.ac.ed.inf.domain;
 
-import uk.ac.ed.inf.domain.Item;
-import uk.ac.ed.inf.domain.Shop;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +20,8 @@ public class ItemData {
     }
 
     /**
-     * Stores the
+     * Populates the hashMaps priceMap and shopMap base on the list of Shops parameter.
+     * @param menuData a list of Shops
      */
     private void loadItemInfo(ArrayList<Shop> menuData) {
         Objects.requireNonNull(menuData);

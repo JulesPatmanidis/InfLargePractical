@@ -2,10 +2,7 @@ package uk.ac.ed.inf;
 
 import uk.ac.ed.inf.clients.DatabaseClient;
 import uk.ac.ed.inf.clients.WebServerClient;
-import uk.ac.ed.inf.domain.Delivery;
-import uk.ac.ed.inf.domain.ItemData;
-import uk.ac.ed.inf.domain.LongLat;
-import uk.ac.ed.inf.domain.Order;
+import uk.ac.ed.inf.domain.*;
 import uk.ac.ed.inf.controller.DroneController;
 import uk.ac.ed.inf.utils.Utils;
 
@@ -28,7 +25,7 @@ public class App {
      * initialising all instances required to run the application and calling all methods for the drone to deliver the
      * orders for a given date.
      * @param args command line arguments that represent the date of the delivery, the webserver port and the database
-     *             port
+     * port.
      */
     public static void main( String[] args )
     {
@@ -47,6 +44,7 @@ public class App {
         /* Sort orders by descending delivery cost */
         orders.sort(Comparator.comparingInt(o -> itemData.calculateDeliveryCost(((Order) o).getOrderDetails())).reversed());
 
+        /* Deliver the orders */
         DroneController droneController =
                 new DroneController(itemData, APPLETON_TOWER, DRONE_STEPS, orders, webServerClient);
 
@@ -54,21 +52,24 @@ public class App {
         int deliveredMonetaryValue = 0;
         int currentCost;
 
-        List<Delivery> deliveries = new ArrayList<>();
         for (Order order : orders) {
-            boolean delivered = droneController.deliverNextOrder();
             currentCost = itemData.calculateDeliveryCost(order.getOrderDetails());
             totalMonetaryValue += currentCost;
-            if (delivered) {
-                deliveredMonetaryValue += currentCost;
-                deliveries.add(new Delivery(order.getOrderNo(), order.getDeliverTo(), currentCost));
-            }
         }
 
+        List<Delivery> deliveries = new ArrayList<>(droneController.deliverOrders());
+        for (Delivery delivery : deliveries) {
+            deliveredMonetaryValue += delivery.getCostInPence();
+        }
+
+        System.out.println("Delivered " + deliveries.size() + " out of " + orders.size() + " orders");
         System.out.printf("Percentage monetary value: %.3f%%\n", (deliveredMonetaryValue / totalMonetaryValue) * 100d);
 
+        /* Write to the database */
         databaseClient.writeDeliveries(deliveries);
         databaseClient.writeFlightpath(droneController.getFlightpathList());
+
+        /* Write to file */
         String output = Utils.GeoJsonFromFlightpath(droneController.getFlightpathList());
 
         if (Utils.writeToFile(outputFileName, output)) {

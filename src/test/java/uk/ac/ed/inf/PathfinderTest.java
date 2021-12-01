@@ -1,15 +1,15 @@
-package uk.ac.ed.inf;
-
-import org.junit.Ignore;
-import uk.ac.ed.inf.domain.LongLat;
-
-@Ignore
-public class PathfinderTest {
-
-    private static final String TEST_DATE_1 = "2022-01-02";
-    private static final String TEST_DATE_2 = "2023-09-10";
-    LongLat AT = new LongLat(-3.186874, 55.944494); // Appleton Tower
-
+//package uk.ac.ed.inf;
+//
+//import org.junit.Ignore;
+//import uk.ac.ed.inf.domain.LongLat;
+//
+//@Ignore
+//public class PathfinderTest {
+//
+//    private static final String TEST_DATE_1 = "2022-01-02";
+//    private static final String TEST_DATE_2 = "2023-09-10";
+//    LongLat AT = new LongLat(-3.186874, 55.944494); // Appleton Tower
+//
 //    @Test
 //    public void testFindPathOnGrid() {
 //        WebServerClient webServerClient = new WebServerClient("9898");
@@ -28,7 +28,7 @@ public class PathfinderTest {
 //            }
 //        }
 //    }
-
+//
 //    @Test
 //    public void testFindPath() {
 //        WebServerClient webServerClient = new WebServerClient("9898");
@@ -41,5 +41,5 @@ public class PathfinderTest {
 //        }
 //        assertTrue(path.get(path.size() - 1).closeTo(Pathfinder.CONFINEMENT_AREA.get(0)));
 //    }
-
-}
+//
+//}

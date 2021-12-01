@@ -63,10 +63,13 @@ public class LongLat {
 
     /**
      * Returns true if the LongLat object is close to the given one, as defined in the coursework instructions.
-     * 
+     * The "BooleanMethodIsAlwaysInverted" warning is suppressed as the functionality of the method is clearer in this
+     * way, despite being inverted with every use.
+     *
      * @param target The target LongLat object
      * @return true if the LongLat object is close to the given one
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean closeTo(LongLat target) {
         Objects.requireNonNull(target, "LongLat target cannot be null.");
         return distanceTo(target) - DISTANCE_ERROR <= CLOSE_DISTANCE;
@@ -124,11 +127,14 @@ public class LongLat {
         List<Integer> angles = new ArrayList<>();
         int angleToTarget = this.calculateAngle(dest);
 
-        for (int i = 0; i < 10; i++) { /* Add angles up to +-90 degrees in intervals of 10 */
+        for (int i = 0; i < 19; i++) { /* Add angles up to +-90 degrees in intervals of 10 */
             int currentN = angleToTarget - i * ALLOWED_ANGLE_MULTIPLE;
             int currentP = angleToTarget + i * ALLOWED_ANGLE_MULTIPLE;
             if (currentN < 0) {
                 currentN += 360;
+            }
+            if (currentP > 360) {
+                currentP -= 360;
             }
             angles.add(currentN);
             angles.add(currentP);
