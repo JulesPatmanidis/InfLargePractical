@@ -13,21 +13,50 @@ import java.util.stream.Collectors;
  * This class handles all interactions with the movement of the drone.
  */
 public class DroneController {
-
+    /**
+     * Represents the orders to be completed
+     */
     private final LinkedList<Order> orderList;
+    /**
+     * The position of the drone's base, where it returns to at the end of its service
+     */
     private final LongLat basePos;
+    /**
+     * The drone's current position
+     */
     private LongLat currentPos;
+    /**
+     * The drone's position after completing its most recent order.
+     */
     private LongLat lastOrderPos;
+    /**
+     * The number of the order currently being delivered.
+     */
     private String currentOrderNo;
+    /**
+     * The steps left for the drone to make.
+     */
     private int stepsLeft;
+    /**
+     * The steps left after the drone completed its most recent delivery.
+     */
     private int lastOrderSteps;
 
+    /**
+     * Information about the items and shops the drone can interact with.
+     */
     private final ItemData itemData;
+    /**
+     * A list of all Flightpaths performed by the drone.
+     */
+    private final List<Flightpath> flightpathList = new ArrayList<>();
+    /**
+     * A list of the Flightpaths performed by the drone during its current delivery.
+     */
+    private List<Flightpath> currentFlightpath = new ArrayList<>();
+
     private final WebServerClient webServerClient;
     private final Pathfinder pathfinder;
-
-    private final List<Flightpath> flightpathList = new ArrayList<>();
-    private List<Flightpath> currentFlightpath = new ArrayList<>();
 
     public DroneController(ItemData itemData, LongLat basePos, int stepsLeft, List<Order> orderList,
                            WebServerClient webServerClient) {
@@ -126,7 +155,7 @@ public class DroneController {
                 stepsLeft--;
             }
             /* Hover to deliver/pickup items. */
-            currentPos = deliver(currentPos);
+            currentPos = hover(currentPos);
             stepsLeft--;
         }
 
@@ -253,13 +282,13 @@ public class DroneController {
     }
 
     /**
-     * Makes the drone hover for one move in order to deliver items and stores the appropriate Flightpath object to the
+     * Makes the drone hover for one move in order to deliver or pick up items and stores the appropriate Flightpath object to the
      * currentOrderFlightpath list.
      *
      * @param origin the drone's current position.
      * @return a LongLat object describing the new position of the drone.
      */
-    private LongLat deliver(LongLat origin) {
+    private LongLat hover(LongLat origin) {
         int angle = LongLat.HOVER_VALUE;
         LongLat nextPos = origin.nextPosition(angle);
         logStep(origin, nextPos, angle);

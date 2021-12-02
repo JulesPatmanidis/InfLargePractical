@@ -24,9 +24,21 @@ public class Pathfinder {
     private static final double C_AREA_LENGTH_Y = Math.abs(TOP_LEFT.getLatitude() - BOT_LEFT.getLatitude());
     public static final double EPSILON = LongLat.CLOSE_DISTANCE / 4; /* Determines the size of the grid cells */
 
+    /**
+     * The grid of nodes used by the Theta* algorithm.
+     */
     private static List<List<GridNode>> virtualGrid;
+    /**
+     * The noFlyZones as a list of Polygons.
+     */
     private final List<Polygon> noFlyZones;
+    /**
+     * The noFlyZones as a list of Line2D objects.
+     */
     private final List<Line2D> noFlyZoneEdges = new ArrayList<>();
+    /**
+     * The noFlyZones as a list of Path2D objects.
+     */
     private final List<Path2D> noFlyZonePaths = new ArrayList<>();
 
     public Pathfinder(List<Polygon> noFlyZones) {
